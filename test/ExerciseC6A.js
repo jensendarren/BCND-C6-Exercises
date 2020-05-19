@@ -2,17 +2,13 @@ var Test = require('../config/testConfig.js');
 var truffleAssert = require('truffle-assertions');
 
 contract('ExerciseC6A', async (accounts) => {
-
   var config;
-  var owner;
 
   before('setup contract', async () => {
     config = await Test.Config(accounts);
-    owner = accounts[0]
   });
 
   it('contract owner can register new user', async () => {
-
     // ARRANGE
     let caller = accounts[0]; // This should be config.owner or accounts[0] for registering a new user
     let newUser = config.testAddresses[0];
@@ -23,7 +19,6 @@ contract('ExerciseC6A', async (accounts) => {
 
     // ASSERT
     assert.equal(result, true, "Contract owner cannot register new user");
-
   });
 
   it('should be possible for the owner to change the operation flag', async () => {
@@ -32,7 +27,7 @@ contract('ExerciseC6A', async (accounts) => {
     assert.equal(operational, true, 'Error: the contract should be default operational')
 
     // try calling setOperatingStatus and setting operational to false
-    await config.exerciseC6A.setOperatingStatus(false, {from: owner});
+    await config.exerciseC6A.setOperatingStatus(false, {from: config.owner});
     operational = await config.exerciseC6A.isOperational()
 
     assert.equal(operational, false, 'Error: operational flag not updated')
@@ -50,12 +45,18 @@ contract('ExerciseC6A', async (accounts) => {
     let newUser = config.testAddresses[0];
 
     // set the operational status to false
-    await config.exerciseC6A.setOperatingStatus(false, {from: owner});
+    await config.exerciseC6A.setOperatingStatus(false, {from: config.owner});
 
     // now modifing contract state should not be possible
     await truffleAssert.reverts(
-      config.exerciseC6A.registerUser(newUser, false, {from: owner}),
+      config.exerciseC6A.registerUser(newUser, false, {from: config.owner}),
       "Contract is not operational"
     )
+  })
+
+  it('should not be possible to cause a lockout of the contract', async () => {
+    // when setting operational to false it should be possible to set it back to true again
+    await config.exerciseC6A.setOperatingStatus(false, {from: config.owner});
+    await config.exerciseC6A.setOperatingStatus(true, {from: config.owner});
   })
 });

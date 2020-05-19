@@ -2,7 +2,7 @@
 var ExerciseC6A = artifacts.require("ExerciseC6A");
 
 var Config = async function(accounts) {
-    
+
     // These test addresses are useful when you need to add
     // multiple users in test scripts
     let testAddresses = [
@@ -20,7 +20,7 @@ var Config = async function(accounts) {
 
     let owner = accounts[0];
     let exerciseC6A = await ExerciseC6A.new();
-    
+
     return {
         owner: owner,
         testAddresses: testAddresses,
