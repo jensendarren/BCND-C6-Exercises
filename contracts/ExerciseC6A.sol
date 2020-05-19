@@ -1,11 +1,11 @@
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.25;
 
 contract ExerciseC6A {
 
     /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
-
+    bool private operational = true;
 
     struct UserProfile {
         bool isRegistered;
@@ -27,11 +27,7 @@ contract ExerciseC6A {
     * @dev Constructor
     *      The deploying account becomes contractOwner
     */
-    constructor
-                                (
-                                ) 
-                                public 
-    {
+    constructor() public {
         contractOwner = msg.sender;
     }
 
@@ -51,15 +47,36 @@ contract ExerciseC6A {
         _;
     }
 
+    /**
+    * @dev Modifier that checks the contract is operational before allowing state changes
+    */
+    modifier requireOperational() {
+        require(operational, "Contract is not operational");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
+
+    /**
+     * @dev Allows the contract owner to modify the status
+     */
+    function setOperatingStatus(bool newOperationalStatus) external requireContractOwner {
+        operational = newOperationalStatus;
+    }
+
+    /**
+    * @dev Sets contract operations on/off
+    *
+    * When operational mode is disabled, all write transactions except for this one will fail
+    */
 
    /**
     * @dev Check if a user is registered
     *
     * @return A bool that indicates if the user is registered
-    */   
+    */
     function isUserRegistered
                             (
                                 address account
@@ -70,6 +87,15 @@ contract ExerciseC6A {
     {
         require(account != address(0), "'account' must be a valid address.");
         return userProfiles[account].isRegistered;
+    }
+
+    /**
+    * @dev Get operating status of contract
+    *
+    * @return A bool that is the current operating status
+    */
+    function isOperational() public view returns(bool) {
+        return operational;
     }
 
     /********************************************************************************************/
@@ -83,6 +109,7 @@ contract ExerciseC6A {
                                 )
                                 external
                                 requireContractOwner
+                                requireOperational
     {
         require(!userProfiles[account].isRegistered, "User is already registered.");
 
