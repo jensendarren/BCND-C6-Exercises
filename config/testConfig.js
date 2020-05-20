@@ -21,6 +21,13 @@ var Config = async function(accounts) {
     let owner = accounts[0];
     let exerciseC6A = await ExerciseC6A.new();
 
+    // register 5 admin user account
+    await exerciseC6A.registerUser(accounts[0], true, {from: owner});
+    await exerciseC6A.registerUser(accounts[1], true, {from: owner});
+    await exerciseC6A.registerUser(accounts[2], true, {from: owner});
+    await exerciseC6A.registerUser(accounts[3], true, {from: owner});
+    await exerciseC6A.registerUser(accounts[4], true, {from: owner});
+
     return {
         owner: owner,
         testAddresses: testAddresses,

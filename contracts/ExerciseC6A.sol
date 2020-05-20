@@ -6,6 +6,10 @@ contract ExerciseC6A {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
     bool private operational = true;
+    uint M = 3;     // number of keys required
+    uint N = 5;     // number of keys in total
+    address[] store;
+    mapping (address => uint) index;
 
     struct UserProfile {
         bool isRegistered;
@@ -41,8 +45,7 @@ contract ExerciseC6A {
     /**
     * @dev Modifier that requires the "ContractOwner" account to be the function caller
     */
-    modifier requireContractOwner()
-    {
+    modifier requireContractOwner(){
         require(msg.sender == contractOwner, "Caller is not contract owner");
         _;
     }
@@ -55,6 +58,11 @@ contract ExerciseC6A {
         _;
     }
 
+    modifier requireAdmin() {
+        require(userProfiles[msg.sender].isAdmin, "User is not an admin and not part of the N key holders");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -62,15 +70,15 @@ contract ExerciseC6A {
     /**
      * @dev Allows the contract owner to modify the status
      */
-    function setOperatingStatus(bool newOperationalStatus) external requireContractOwner {
-        operational = newOperationalStatus;
-    }
+    function setOperatingStatus(bool newOperationalStatus) external requireAdmin {
+        // Check the array contains the address already and if not add ti
+        addToArray(msg.sender);
 
-    /**
-    * @dev Sets contract operations on/off
-    *
-    * When operational mode is disabled, all write transactions except for this one will fail
-    */
+        // Now we can use the length property to check we have consenuse
+        if(consensusReached()) {
+            operational = newOperationalStatus;
+        }
+    }
 
    /**
     * @dev Check if a user is registered
@@ -96,6 +104,31 @@ contract ExerciseC6A {
     */
     function isOperational() public view returns(bool) {
         return operational;
+    }
+
+    function consensusReached() public view returns(bool) {
+        return counter() == M;
+    }
+
+    function counter() public view returns(uint8) {
+        // subtract 1 becuase the array is initialized with one elemetn of address 0
+        return uint8(store.length);
+    }
+
+    function addToArray(address who) public {
+        if (!inArray(who) && who != address(0x0)) {
+            // Append
+            index[who] = store.length;
+            store.push(who);
+        }
+    }
+
+    function inArray(address who) public view returns (bool) {
+        // address 0x0 is not valid if pos is 0 is not in the array
+        if (who != address(0x0) && index[who] > 0) {
+            return true;
+        }
+        return false;
     }
 
     /********************************************************************************************/
