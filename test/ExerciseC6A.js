@@ -4,7 +4,7 @@ var truffleAssert = require('truffle-assertions');
 contract('ExerciseC6A', async (accounts) => {
   var config;
 
-  before('setup contract', async () => {
+  beforeEach('setup contract', async () => {
     config = await Test.Config(accounts);
   });
 
@@ -18,7 +18,7 @@ contract('ExerciseC6A', async (accounts) => {
     let result = await config.exerciseC6A.isUserRegistered.call(newUser);
 
     // ASSERT
-    assert.equal(result, true, "Contract owner cannot register new user");
+    assert.equal(result, true, "Error: Contract owner cannot register new user");
   });
 
   it('must have a consensus of 3 to change the operational status', async () => {
@@ -31,14 +31,13 @@ contract('ExerciseC6A', async (accounts) => {
 
     operational = await config.exerciseC6A.isOperational()
     // Contract will STILL be operational (since a concensus of 3 requests is required)
-    assert.equal(operational, true, 'Error: the contract should be default operational')
+    assert.equal(operational, true, 'Error: the contract should remain operational')
   })
 
   it('should not be possible to modify state when the contract is not operational', async () => {
     let newUser = config.testAddresses[1];
 
     // set the operational status to false
-    await config.exerciseC6A.setOperatingStatus(false, {from: config.owner});
     await config.exerciseC6A.setOperatingStatus(false, {from: accounts[1]});
     await config.exerciseC6A.setOperatingStatus(false, {from: accounts[2]});
     await config.exerciseC6A.setOperatingStatus(false, {from: accounts[3]});
@@ -51,9 +50,20 @@ contract('ExerciseC6A', async (accounts) => {
   })
 
   it('should not be possible to cause a lockout of the contract', async () => {
+    let operational = await config.exerciseC6A.isOperational()
+    assert.equal(operational, true, 'Error: the contract should be default operational')
     // when setting operational to false it should be possible to set it back to true again
-    await config.exerciseC6A.setOperatingStatus(false, {from: config.owner});
-    await config.exerciseC6A.setOperatingStatus(true, {from: config.owner});
+    await config.exerciseC6A.setOperatingStatus(false, {from: accounts[1]});
+    await config.exerciseC6A.setOperatingStatus(false, {from: accounts[2]});
+    await config.exerciseC6A.setOperatingStatus(false, {from: accounts[3]});
+    operational = await config.exerciseC6A.isOperational()
+    assert.equal(operational, false, 'Error: operational should be false')
+
+    await config.exerciseC6A.setOperatingStatus(true, {from: accounts[1]});
+    await config.exerciseC6A.setOperatingStatus(true, {from: accounts[2]});
+    await config.exerciseC6A.setOperatingStatus(true, {from: accounts[3]});
+    operational = await config.exerciseC6A.isOperational()
+    assert.equal(operational, true, 'Error: operational should be true')
   })
 
   it('must be an admin to change the operating status', async () => {
@@ -79,18 +89,20 @@ contract('ExerciseC6A', async (accounts) => {
       assert.equal(parseInt(counter), 2, 'Error: Counter is being incremented incorrectly')
     })
 
-    it('updates the operational status when consensus is reached', async () => {
-      let operational = await config.exerciseC6A.isOperational()
+    it('updates the operational status when consensus is reached and resets the counter', async () => {
+      let operational, counter;
+      operational = await config.exerciseC6A.isOperational()
       // Contract should start off being operational
       assert.equal(operational, true, 'Error: the contract should be default operational')
       await config.exerciseC6A.setOperatingStatus(false, {from: accounts[1]})
       await config.exerciseC6A.setOperatingStatus(false, {from: accounts[2]})
       await config.exerciseC6A.setOperatingStatus(false, {from: accounts[3]})
+      // await config.exerciseC6A.setOperatingStatus(false, {from: accounts[4]})
       operational = await config.exerciseC6A.isOperational()
-      let consensusReached = await config.exerciseC6A.consensusReached()
+      counter = await config.exerciseC6A.counter()
       // Contract will now have an operational status of false since consensus was reached
-      assert.equal(consensusReached, true, 'Error: Consensus is not being marked as reached')
       assert.equal(operational, false, 'Error: the contract should NOT be operational')
+      assert.equal(counter, 0, "Error: counter not reset")
     })
   })
 });

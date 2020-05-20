@@ -5,11 +5,11 @@ contract ExerciseC6A {
     /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
-    bool private operational = true;
-    uint M = 3;     // number of keys required
-    uint N = 5;     // number of keys in total
-    address[] store;
-    mapping (address => uint) index;
+    bool private operational = true;                // operational flag
+    uint constant M = 3;                            // number of keys required
+    uint constant N = 5;                            // number of keys in total
+    address[] store = new address[](0);             // array of addresses for consensus
+    mapping (address => uint8) index;                // mapping of addresses for consensus
 
     struct UserProfile {
         bool isRegistered;
@@ -70,13 +70,20 @@ contract ExerciseC6A {
     /**
      * @dev Allows the contract owner to modify the status
      */
-    function setOperatingStatus(bool newOperationalStatus) external requireAdmin {
+    function setOperatingStatus(bool mode) external requireAdmin {
+        require(mode != operational, "New mode must be different from existing mode");
         // Check the array contains the address already and if not add ti
         addToArray(msg.sender);
 
         // Now we can use the length property to check we have consenuse
         if(consensusReached()) {
-            operational = newOperationalStatus;
+            operational = mode;
+            for(uint i = 0; i < store.length; i++) {
+                // delete each mapping
+                delete index[store[i]];
+            }
+            // reset the address array
+            store = new address[](0);
         }
     }
 
@@ -107,7 +114,7 @@ contract ExerciseC6A {
     }
 
     function consensusReached() public view returns(bool) {
-        return counter() == M;
+        return counter() >= M;
     }
 
     function counter() public view returns(uint8) {
@@ -118,7 +125,7 @@ contract ExerciseC6A {
     function addToArray(address who) public {
         if (!inArray(who) && who != address(0x0)) {
             // Append
-            index[who] = store.length;
+            index[who] = uint8(store.length);
             store.push(who);
         }
     }
