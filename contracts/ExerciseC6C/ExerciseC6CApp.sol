@@ -18,8 +18,9 @@ contract ExerciseC6CApp {
         _;
     }
 
-    constructor() public {
+    constructor(address dataContract) public {
         contractOwner = msg.sender;
+        exerciseC6C = ExerciseC6C(dataContract);
     }
 
     /********************************************************************************************/

@@ -89,7 +89,7 @@ contract ExerciseC6C {
         return employees[id].bonus;
     }
 
-    function updateEmployee(string id, uint256 sales, uint256 bonus) external requireContractOwner {
+    function updateEmployee(string id, uint256 sales, uint256 bonus) external {
         require(employees[id].isRegistered, "Employee is not registered.");
 
         employees[id].sales = employees[id].sales.add(sales);
