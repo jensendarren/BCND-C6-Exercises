@@ -6,7 +6,6 @@ pragma solidity ^0.4.25;
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-
 contract ExerciseC6B {
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
 
@@ -14,18 +13,12 @@ contract ExerciseC6B {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
-
     address private contractOwner;                  // Account used to deploy contract
 
-
-    constructor
-                (
-                )
-                public 
-    {
+    constructor () public {
         contractOwner = msg.sender;
     }
-   
+
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
@@ -36,8 +29,7 @@ contract ExerciseC6B {
     /**
     * @dev Modifier that requires the "ContractOwner" account to be the function caller
     */
-    modifier requireContractOwner()
-    {
+    modifier requireContractOwner() {
         require(msg.sender == contractOwner, "Caller is not contract owner");
         _;
     }
@@ -47,6 +39,5 @@ contract ExerciseC6B {
     /********************************************************************************************/
 
 
-    
-}
 
+}
