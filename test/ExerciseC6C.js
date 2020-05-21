@@ -8,7 +8,6 @@ contract('ExerciseC6C', async (accounts) => {
   });
 
   it('can register Employee, add sale and calculate bonus', async () => {
-    
     // ARRANGE
     let employee = {
       id: 'test1',
@@ -27,7 +26,4 @@ contract('ExerciseC6C', async (accounts) => {
     assert.equal(bonus.toNumber(), expectedBonus, "Calculated bonus is incorrect incorrect");
 
   });
-
-
- 
 });
