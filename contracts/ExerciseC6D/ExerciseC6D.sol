@@ -6,16 +6,14 @@ pragma solidity ^0.4.25;
 
 import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-
 contract ExerciseC6D {
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
 
-  
     address private contractOwner;                  // Account used to deploy contract
 
 
     // Incremented to add pseudo-randomness at various points
-    uint8 private nonce = 0;    
+    uint8 private nonce = 0;
 
     // Fee to be paid when registering oracle
     uint256 public constant REGISTRATION_FEE = 1 ether;
@@ -51,27 +49,20 @@ contract ExerciseC6D {
     // Flight data persisted forever
     struct FlightStatus {
         bool hasStatus;
-        uint8 status;        
+        uint8 status;
     }
+
     mapping(bytes32 => FlightStatus) flights;
 
-
-
-
-    constructor
-                (
-                )
-                public 
-    {
+    constructor() public {
         contractOwner = msg.sender;
     }
-   
+
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
 
-    modifier requireContractOwner()
-    {
+    modifier requireContractOwner() {
         require(msg.sender == contractOwner, "Caller is not contract owner");
         _;
     }
@@ -85,31 +76,19 @@ contract ExerciseC6D {
     // STAGE ONE: ORACLES REGISTER WITH THE SMART CONTRACT
 
     // Register an oracle with the contract
-    function registerOracle
-                            (
-                            )
-                            external
-                            payable
+    function registerOracle() external payable
     {
-        // CODE EXERCISE 1: Require registration fee
-        /* Enter code here */
+        // Require registration fee
+        require(msg.value >= REGISTRATION_FEE, "Registration fee is required");
 
-        // CODE EXERCISE 1: Generate three random indexes (range 0-9) using generateIndexes for the calling oracle
-        /* Enter code here */
+        // Generate three random indexes (range 0-9) using generateIndexes for the calling oracle
+        uint8[3] memory index = generateIndexes(msg.sender);
 
-        // CODE EXERCISE 1: Assign the indexes to the oracle and save to the contract state
-        /* Enter code here */
+        // Assign the indexes to the oracle and save to the contract state
+        oracles[msg.sender] = index;
     }
 
-    function getOracle
-                        (
-                            address account
-                        )
-                        external
-                        view
-                        requireContractOwner
-                        returns(uint8[3])
-    {
+    function getOracle(address account) external view requireContractOwner returns(uint8[3]) {
         return oracles[account];
     }
 
@@ -129,13 +108,7 @@ contract ExerciseC6D {
 
 
     // Generate a request
-    function fetchFlightStatus
-                        (
-                            string flight,
-                            uint256 timestamp                            
-                        )
-                        external
-    {
+    function fetchFlightStatus(string flight,uint256 timestamp) external {
         // Generate a number between 0 - 9 to determine which oracles may respond
 
         // CODE EXERCISE 2: Replace the hard-coded value of index with a random index based on the calling account
@@ -166,17 +139,8 @@ contract ExerciseC6D {
     // For the response to be accepted, there must be a pending request that is open
     // and matches one of the three Indexes randomly assigned to the oracle at the
     // time of registration (i.e. uninvited oracles are not welcome)
-    function submitOracleResponse
-                        (
-                            uint8 index,
-                            string flight,
-                            uint256 timestamp,
-                            uint8 statusId
-                        )
-                        external
-    {
-        require((oracles[msg.sender][0] == index) || (oracles[msg.sender][1] == index) || (oracles[msg.sender][2] == index), "Index does not match oracle request");
-
+    function submitOracleResponse (uint8 index,string flight,uint256 timestamp,uint8 statusId) external {
+        require((oracles[msg.sender][0] == index) || (oracles[msg.sender][1] == index) || (oracles[msg.sender][2] ==index), "Index does not match oracle request");
 
         // CODE EXERCISE 3: Require that the response is being submitted for a request that is still open
         bytes32 key = 0; /* Replace 0 with code to generate a key using index, flight and timestamp */
@@ -213,15 +177,7 @@ contract ExerciseC6D {
     /************************************ BEGIN: Utility Functions ************************************/
 
     // Query the status of any flight
-    function viewFlightStatus
-                            (
-                                string flight,
-                                uint256 timestamp
-                            )
-                            external
-                            view
-                            returns(uint8)
-    {
+    function viewFlightStatus(string flight,uint256 timestamp)external view returns(uint8) {
             require(flights[flightKey].hasStatus, "Flight status not available");
 
             bytes32 flightKey = keccak256(abi.encodePacked(flight, timestamp));
@@ -230,16 +186,10 @@ contract ExerciseC6D {
 
 
     // Returns array of three non-duplicating integers from 0-9
-    function generateIndexes
-                            (                       
-                                address account         
-                            )
-                            internal
-                            returns(uint8[3])
-    {
+    function generateIndexes(address account) internal returns(uint8[3]) {
         uint8[3] memory indexes;
         indexes[0] = getRandomIndex(account);
-        
+
         indexes[1] = indexes[0];
         while(indexes[1] == indexes[0]) {
             indexes[1] = getRandomIndex(account);
@@ -254,13 +204,7 @@ contract ExerciseC6D {
     }
 
     // Returns array of three non-duplicating integers from 0-9
-    function getRandomIndex
-                            (
-                                address account
-                            )
-                            internal
-                            returns (uint8)
-    {
+    function getRandomIndex(address account) internal returns (uint8) {
         uint8 maxValue = 10;
 
         // Pseudo random number...the incrementing nonce adds variation
@@ -274,7 +218,5 @@ contract ExerciseC6D {
     }
 
     /************************************ END: Utility Functions ************************************/
-
-    
 }
 
