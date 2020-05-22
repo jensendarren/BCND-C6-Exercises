@@ -1,22 +1,10 @@
-## Blockchain Course 6 Exercises
-
-To install, download or clone the repo, then move to the required exercise branch with either:
-
-- `git checkout ExerciseC6A`
-- `git checkout ExerciseC6B`
-- `git checkout ExerciseC6C`
-- `git checkout ExerciseC6D`
-
-and for each exercise run:
-
-`npm install`
-`truffle compile`
+## Blockchain Course 6 Exercises: Smart Contract Upgradability
 
 ## Develop
 
 To run truffle tests:
 
-`truffle test ./test/ExerciseC6A.js` or `npm test`
+`truffle test ./test/ExerciseC6C.js` or `npm test`
 
 ## Resources
 
