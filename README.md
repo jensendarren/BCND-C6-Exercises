@@ -2,10 +2,10 @@
 
 To install, download or clone the repo, then move to the required exercise branch with either:
 
-- `git checkout ExerciseC6A`
-- `git checkout ExerciseC6B`
-- `git checkout ExerciseC6C`
-- `git checkout ExerciseC6D`
+* **Stop Loss** `git checkout ExerciseC6A`
+* **Receive Transfer and Send Funds**`git checkout ExerciseC6B`
+* **Smart Contract Upgradability** `git checkout ExerciseC6C`
+* **Data from Oracles**`git checkout ExerciseC6D`
 
 and for each exercise run:
 
@@ -14,9 +14,14 @@ and for each exercise run:
 
 ## Develop
 
-To run truffle tests:
+To run truffle tests its recommnded to use ganache-cli and truffle console like so:
 
-`truffle test ./test/ExerciseC6A.js` or `npm test`
+```
+ganache-cli
+truffle console
+test # Runs the tests in the console
+test test/ExcerciseC6.... # Runs the specific test file in the console
+```
 
 ## Resources
 
