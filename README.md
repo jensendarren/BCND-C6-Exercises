@@ -2,15 +2,17 @@
 
 To install, download or clone the repo, then move to the required exercise branch with either:
 
-* **Stop Loss** `git checkout ExerciseC6A`
-* **Receive Transfer and Send Funds**`git checkout ExerciseC6B`
-* **Smart Contract Upgradability** `git checkout ExerciseC6C`
-* **Data from Oracles**`git checkout ExerciseC6D`
+* [**Stop Loss**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6A) `git checkout ExerciseC6A`
+* [**Receive Transfer and Send Funds**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6N) `git checkout ExerciseC6B`
+* [**Smart Contract Upgradability**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6C) `git checkout ExerciseC6C`
+* [**Data from Oracles**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6D) `git checkout ExerciseC6D`
 
 and for each exercise run:
 
-`npm install`
-`truffle compile`
+```
+npm install
+truffle compile
+```
 
 ## Develop
 
