@@ -10,6 +10,8 @@ import "../../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract ExerciseC6C {
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
 
+    mapping(address => uint256) private authorizedContracts;
+
     /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
@@ -55,6 +57,11 @@ contract ExerciseC6C {
         _;
     }
 
+    modifier isCallerAuthorized() {
+        require(authorizedContracts[msg.sender] == 1, "Caller not authorized");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -66,6 +73,14 @@ contract ExerciseC6C {
     */
     function isEmployeeRegistered(string id) external view returns(bool) {
         return employees[id].isRegistered;
+    }
+
+    function authorizeContract(address app) external requireContractOwner {
+        authorizedContracts[app] = 1;
+    }
+
+    function deauthorizeContract(address app) external requireContractOwner {
+        delete authorizedContracts[app];
     }
 
     /********************************************************************************************/
@@ -89,12 +104,10 @@ contract ExerciseC6C {
         return employees[id].bonus;
     }
 
-    function updateEmployee(string id, uint256 sales, uint256 bonus) external {
+    function updateEmployee(string id, uint256 sales, uint256 bonus) external isCallerAuthorized {
         require(employees[id].isRegistered, "Employee is not registered.");
 
         employees[id].sales = employees[id].sales.add(sales);
         employees[id].bonus = employees[id].bonus.add(bonus);
     }
-
-
 }
