@@ -1,4 +1,3 @@
-
 var Test = require('../config/testConfig.js');
 //var BigNumber = require('bignumber.js');
 
@@ -11,17 +10,15 @@ contract('ExerciseC6D', async (accounts) => {
 
     // Watch contract events
     const ON_TIME = 10;
-    // myContract.events.MyEvent
-    let events = config.exerciseC6D.allEvents();
 
-    events.on('OracleRequest', (e) => {
+    // Listen for events (Truffle v5 version!)
+    config.exerciseC6D.OracleRequest({}, (error, result) => {
       console.log(`\n\nOracle Requested: index: ${result.args.index.toNumber()}, flight:  ${result.args.flight}, timestamp: ${result.args.timestamp.toNumber()}`);
     });
 
-    events.on('FlightStatusInfo', (e) => {
+    config.exerciseC6D.FlightStatusInfo({}, (error, result) => {
       console.log(`\n\nFlight Status Available: flight: ${result.args.flight}, timestamp: ${result.args.timestamp.toNumber()}, status: ${result.args.status.toNumber() == ON_TIME ? 'ON TIME' : 'DELAYED'}, verified: ${result.args.verified ? 'VERIFIED' : 'UNVERIFIED'}`);
     });
-
   });
 
 
@@ -38,7 +35,6 @@ contract('ExerciseC6D', async (accounts) => {
   });
 
   it('can request flight status', async () => {
-
     // ARRANGE
     let flight = 'ND1309'; // Course number
     let timestamp = Math.floor(Date.now() / 1000);

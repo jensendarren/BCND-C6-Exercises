@@ -111,8 +111,8 @@ contract ExerciseC6D {
     function fetchFlightStatus(string flight,uint256 timestamp) external {
         // Generate a number between 0 - 9 to determine which oracles may respond
 
-        // CODE EXERCISE 2: Replace the hard-coded value of index with a random index based on the calling account
-        uint8 index = 0;  /* Replace code here */
+        // Replace the hard-coded value of index with a random index based on the calling account
+        uint8 index = getRandomIndex(msg.sender);
 
 
         // Generate a unique key for storing the request
@@ -122,8 +122,8 @@ contract ExerciseC6D {
                                                 isOpen: true
                                             });
 
-        // CODE EXERCISE 2: Notify oracles that match the index value that they need to fetch flight status
-        /* Enter code here */
+        // Notify oracles that match the index value that they need to fetch flight status
+        emit OracleRequest(index, flight, timestamp);
 
     }
 
@@ -140,11 +140,14 @@ contract ExerciseC6D {
     // and matches one of the three Indexes randomly assigned to the oracle at the
     // time of registration (i.e. uninvited oracles are not welcome)
     function submitOracleResponse (uint8 index,string flight,uint256 timestamp,uint8 statusId) external {
-        require((oracles[msg.sender][0] == index) || (oracles[msg.sender][1] == index) || (oracles[msg.sender][2] ==index), "Index does not match oracle request");
+        require((oracles[msg.sender][0] == index) ||
+                (oracles[msg.sender][1] == index) ||
+                (oracles[msg.sender][2] == index), "Index does not match oracle request");
 
-        // CODE EXERCISE 3: Require that the response is being submitted for a request that is still open
-        bytes32 key = 0; /* Replace 0 with code to generate a key using index, flight and timestamp */
+        // Require that the response is being submitted for a request that is still open
+        bytes32 key = keccak256(abi.encodePacked(index, flight, timestamp));
 
+        require(oracleResponses[key].isOpen, "Request is no longer open");
 
         oracleResponses[key].responses[statusId].push(msg.sender);
 
@@ -152,11 +155,11 @@ contract ExerciseC6D {
         // oracles respond with the *** same *** information
         if (oracleResponses[key].responses[statusId].length >= MIN_RESPONSES) {
 
-            // CODE EXERCISE 3: Prevent any more responses since MIN_RESPONSE threshold has been reached
-            /* Enter code here */
+            // Prevent any more responses since MIN_RESPONSE threshold has been reached
+            oracleResponses[key].isOpen = false;
 
-            // CODE EXERCISE 3: Announce to the world that verified flight status information is available
-            /* Enter code here */
+            // Announce to the world that verified flight status information is available
+            emit FlightStatusInfo(flight, timestamp, statusId, true);
 
             // Save the flight information for posterity
             bytes32 flightKey = keccak256(abi.encodePacked(flight, timestamp));
@@ -164,8 +167,8 @@ contract ExerciseC6D {
         } else {
             // Oracle submitting response but MIN_RESPONSES threshold not yet reached
 
-            // CODE EXERCISE 3: Announce to the world that verified flight status information is available
-            /* Enter code here */
+            // Announce to the world that verified flight status information is available
+            emit FlightStatusInfo(flight, timestamp, statusId, false);
         }
     }
 

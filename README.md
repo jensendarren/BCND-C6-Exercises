@@ -14,9 +14,12 @@ and for each exercise run:
 
 ## Develop
 
-To run truffle tests:
+To run truffle tests, you need to start ganache-cli with 30 accounts and then run the specific test file as follows:
 
-`truffle test ./test/ExerciseC6A.js` or `npm test`
+```
+ganache-cli -a 30
+truffle test ./test/ExerciseC6D.js
+```
 
 ## Resources
 
