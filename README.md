@@ -1,16 +1,4 @@
-## Blockchain Course 6 Exercises
-
-To install, download or clone the repo, then move to the required exercise branch with either:
-
-- `git checkout ExerciseC6A`
-- `git checkout ExerciseC6B`
-- `git checkout ExerciseC6C`
-- `git checkout ExerciseC6D`
-
-and for each exercise run:
-
-`npm install`
-`truffle compile`
+## Blockchain Course 6 Exercises: Blockchain Oracles
 
 ## Develop
 
