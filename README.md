@@ -1,5 +1,20 @@
 ## Blockchain Course 6 Exercises: Blockchain Oracles
 
+
+To install, download or clone the repo, then move to the required exercise branch with either:
+
+* [**Stop Loss**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6A) `git checkout ExerciseC6A`
+* [**Receive Transfer and Send Funds**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6N) `git checkout ExerciseC6B`
+* [**Smart Contract Upgradability**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6C) `git checkout ExerciseC6C`
+* [**Data from Oracles**](https://github.com/jensendarren/BCND-C6-Exercises/tree/ExerciseC6D) `git checkout ExerciseC6D`
+
+and for each exercise run:
+
+```
+npm install
+truffle compile
+```
+
 ## Develop
 
 To run truffle tests, you need to start ganache-cli with 30 accounts and then run the specific test file as follows:
